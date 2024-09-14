@@ -1,7 +1,5 @@
 import React, { useRef } from 'react';
 import { IPointerDragData, usePointerDrag } from 'react-use-pointer-drag';
-
-import styles from './Slider.module.scss';
 import { clamp } from '../helpers';
 
 interface SliderProps {
@@ -21,12 +19,13 @@ export const Slider: React.FC<SliderProps> = ({
 
   const handleEvent = ({ x }: IPointerDragData<unknown>) => {
     const rect = trackRef.current!.getBoundingClientRect();
-    const value = clamp(
+    const newValue = clamp(
       ((x - rect.left) / rect.width) * (max - min) + min,
       min,
       max,
     );
-    onChange?.(value);
+    console.log('Slider value:', newValue); // Check if dragging works
+    onChange?.(newValue);
   };
 
   const { dragProps } = usePointerDrag({
@@ -35,13 +34,16 @@ export const Slider: React.FC<SliderProps> = ({
     onClick: handleEvent,
     onMove: handleEvent,
   });
+
   return (
-    <div className={styles.slider}>
-      <div className={styles.track} ref={trackRef} {...dragProps()}>
+    <div className="py-4">
+      {/* Ensure relative positioning for absolute child */}
+      <div className="relative bg-accent-foreground h-2 rounded-md" ref={trackRef} {...dragProps()}>
         <div
-          className={styles.thumb}
+          className="absolute top-[-0.75rem] h-8 w-3 bg-primary rounded-md"
           style={{
             left: `${((value - min) / (max - min)) * 100}%`,
+            transform: 'translate(-50%, 0)',
           }}
         ></div>
       </div>

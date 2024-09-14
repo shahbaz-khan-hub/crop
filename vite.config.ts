@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-
+import path from "path"
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   build: {
@@ -23,10 +23,17 @@ export default defineConfig(({ mode }) => ({
     exclude: ['@ffmpeg/ffmpeg'],
   },
   resolve:
+  
     mode === 'production'
       ? {
           // Enables MobX production build
           mainFields: ['jsnext:main', 'module', 'main'],
         }
       : undefined,
+      
+        alias: {
+          "@": path.resolve(__dirname, "./src"),
+        },
+     
+
 }));

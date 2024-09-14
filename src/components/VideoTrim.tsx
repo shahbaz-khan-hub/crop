@@ -2,11 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { BsPlay, BsPause } from 'react-icons/bs';
 import { usePointerDrag } from 'react-use-pointer-drag';
 import clsx from 'clsx';
-
-import styles from './VideoTrim.module.scss';
-import { clamp, humanTime } from '../helpers';
 import { Time } from '../types';
-
+import { clamp } from '../helpers';
+import { humanTime } from '../helpers';
 interface VideoTrimProps {
   onChange: (time: Time) => void;
   time?: Time;
@@ -117,6 +115,7 @@ export const VideoTrim: React.FC<VideoTrimProps> = ({
     },
   });
 
+
   useEffect(() => {
     const update = () => {
       setPlaying(!video.paused);
@@ -140,71 +139,101 @@ export const VideoTrim: React.FC<VideoTrimProps> = ({
   }, [video, setPlaying]);
 
   return (
-    <>
-      <div className={styles.controls}>
-        <button
-          onClick={() => {
-            if (video.paused) {
-              video.play();
-            } else {
-              video.pause();
-            }
-          }}
-        >
-          {playing ? <BsPause /> : <BsPlay />}
-        </button>
-        <div className={styles.timeline} ref={timelineRef}>
-          <div
-            className={styles.range}
-            style={{
-              left: `${(time[0] / video.duration) * 100}%`,
-              right: `${100 - (time[1] / video.duration) * 100}%`,
-            }}
-            {...dragProps({
-              direction: 'move',
-              time,
-              paused: video.paused,
-            })}
-          >
-            <div
-              className={clsx(styles.handleLeft, {
-                [styles.active]: dragState?.direction === 'left',
-              })}
-              data-time={humanTime(time[0])}
-              {...dragProps({
-                direction: 'left',
-                currentTime,
-                paused: video.paused,
-              })}
-            />
-            <div
-              className={clsx(styles.handleRight, {
-                [styles.active]: dragState?.direction === 'right',
-              })}
-              data-time={humanTime(time[1])}
-              {...dragProps({
-                direction: 'right',
-                currentTime,
-                paused: video.paused,
-              })}
-            />
-          </div>
-          <div
-            className={clsx(styles.current, {
-              [styles.active]: dragState?.direction === 'seek',
-            })}
-            style={{
-              left: `${(currentTime / video.duration) * 100}%`,
-            }}
-            {...dragProps({
-              direction: 'seek',
-              time,
-              paused: video.paused,
-            })}
-            data-time={humanTime(currentTime)}
-          ></div>
-        </div>
+    <div className="flex flex-col mb-4  mx-10 my-3 mt-4">
+    <div className="flex mb-5  ml-0 ">
+      <button
+        onClick={() => {
+          if (video.paused) {
+            video.play();
+          } else {
+            video.pause();
+          }
+        }}
+        className="bg-primary text-secondary-foreground px-3 py-2 rounded-md"
+      >
+        {playing ? <BsPause /> : <BsPlay />}
+      </button>
+      <div className="text-accent ml-3 mt-1">
+        Current Time: {humanTime(currentTime)}
       </div>
-    </>
+    </div>
+  
+    <div className="relative w-full h-12 bg-accent-foreground shadow-md mt-2" ref={timelineRef}>
+      {/* Left Time Indicator */}
+      <div className="absolute -top-6 left-0 text-accent">
+        {humanTime(time[0])}
+      </div>
+  
+      {/* Trim Range */}
+      <div
+        className={clsx(
+          'absolute top-0 bottom-0 bg-gray-500 cursor-move',
+          { 'active': dragState?.direction === 'move' }
+        )}
+        style={{
+          left: `${(time[0] / video.duration) * 100}%`,
+          right: `${100 - (time[1] / video.duration) * 100}%`,
+        }}
+        {...dragProps({
+          direction: 'move',
+          time,
+          paused: video.paused,
+        })}
+      >
+        {/* Left Resize Handle */}
+        <div
+          className={clsx(
+            'absolute top-0 bottom-0 w-4 bg-blue-600 border-2 border-white cursor-w-resize',
+            { 'active': dragState?.direction === 'left' }
+          )}
+          style={{ left: 0 }}
+          data-time={humanTime(time[0])}
+          {...dragProps({
+            direction: 'left',
+            currentTime,
+            paused: video.paused,
+          })}
+        />
+  
+        {/* Right Resize Handle */}
+        <div
+          className={clsx(
+            'absolute top-0 bottom-0 w-4 bg-blue-600 border-2 border-white cursor-e-resize',
+            { 'active': dragState?.direction === 'right' }
+          )}
+          style={{ right: 0 }}
+          data-time={humanTime(time[1])}
+          {...dragProps({
+            direction: 'right',
+            currentTime,
+            paused: video.paused,
+          })}
+        />
+      </div>
+  
+      {/* Current Time Indicator */}
+      <div
+        className={clsx(
+          'absolute top-0 bottom-0 w-2 bg-primary border-l-2 border-none cursor-ew-resize',
+          { 'active': dragState?.direction === 'seek' }
+        )}
+        style={{
+          left: `${(currentTime / video.duration) * 100}%`,
+        }}
+        {...dragProps({
+          direction: 'seek',
+          time,
+          paused: video.paused,
+        })}
+        data-time={humanTime(currentTime)}
+      ></div>
+  
+      {/* Right Time Indicator */}
+      <div className="absolute -top-6 right-0 text-accent">
+        {humanTime(time[1])}
+      </div>
+    </div>
+  </div>
+  
   );
 };

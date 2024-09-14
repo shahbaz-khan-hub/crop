@@ -2,7 +2,6 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { runInAction } from 'mobx';
 
-import styles from './PrepareProgress.module.scss';
 import { mainStore } from '../stores/main';
 
 export const PrepareProgress: React.FC = observer(() => {
@@ -14,8 +13,8 @@ export const PrepareProgress: React.FC = observer(() => {
 
   if (!ffmpeg.loaded) {
     return (
-      <div className={styles.progress}>
-        <div className={styles.actions}>
+      <div className="min-w-0 w-full max-w-md">
+        <div className="mb-1 flex items-center">
           <button
             onClick={() => {
               runInAction(() => {
@@ -27,9 +26,9 @@ export const PrepareProgress: React.FC = observer(() => {
             <span>Cancel</span>
           </button>
         </div>
-        <div className={styles.info}>
+        <div className="mb-1">
           <span>Preparing video preview - loading FFMpeg</span>
-          <progress value={ffmpeg.loadProgress} max={1} />
+          <progress className="w-full" value={ffmpeg.loadProgress} max={1} />
         </div>
       </div>
     );
@@ -37,8 +36,8 @@ export const PrepareProgress: React.FC = observer(() => {
 
   if (ffmpeg.running) {
     return (
-      <div className={styles.progress}>
-        <div className={styles.actions}>
+      <div className="min-w-0 w-full max-w-md">
+        <div className="mb-1 flex items-center">
           <button
             onClick={() => {
               runInAction(() => {
@@ -50,14 +49,14 @@ export const PrepareProgress: React.FC = observer(() => {
             <span>Cancel</span>
           </button>
         </div>
-        <div className={styles.info}>
+        <div className="mb-1">
           <span>Preparing video preview - remuxing</span>
-          <progress value={ffmpeg.execProgress} max={1} />
-          <pre>{ffmpeg.output}</pre>
+          <progress className="w-full" value={ffmpeg.execProgress} max={1} />
+          <pre className="max-w-full max-h-500 overflow-wrap break-word whitespace-pre-wrap overflow-y-auto overflow-x-hidden">{ffmpeg.output}</pre>
         </div>
       </div>
     );
   }
 
-  return <div className={styles.loading}>Loading...</div>;
+  return <div className="loading">Loading...</div>;
 });

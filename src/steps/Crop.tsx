@@ -10,13 +10,13 @@ import {
   BsArrowCounterclockwise,
 } from 'react-icons/bs';
 
-import styles from './Crop.module.scss';
 import { mainStore } from '../stores/main';
 import { VideoCrop } from '../components/VideoCrop';
 import { VideoTrim } from '../components/VideoTrim';
 
 export const Crop: React.FC = observer(() => {
   const video = mainStore.video;
+
   if (!video) {
     return (
       <div>
@@ -26,11 +26,15 @@ export const Crop: React.FC = observer(() => {
   }
 
   return (
-    <div className={styles.step}>
-      <div className={styles.controls}>
-        <div>
+    <div className="flex flex-col mt-28 ml-0 mx-10 my-4">
+      {/* Top Action Bar */}
+      <div className="flex justify-between mmt-10">
+        {/* Left Actions */}
+        <div className="flex  flex-row mx-10 space-x-4  space-y">
+          {/* Mute/Unmute Button */}
           <button
             title={mainStore.transform.mute ? 'Unmute' : 'Mute'}
+            className="p-2 rounded bg-primary"
             onClick={() => {
               runInAction(() => {
                 const mute = !mainStore.transform.mute;
@@ -44,8 +48,10 @@ export const Crop: React.FC = observer(() => {
           >
             {mainStore.transform.mute ? <BsVolumeMute /> : <BsVolumeUp />}
           </button>
+
           <button
             title="Flip horizontally"
+            className="p-2 rounded bg-primary"
             onClick={() => {
               runInAction(() => {
                 const { flipH, area } = mainStore.transform;
@@ -66,8 +72,11 @@ export const Crop: React.FC = observer(() => {
           >
             <BsSymmetryVertical />
           </button>
+
+          {/* Flip Vertically Button */}
           <button
             title="Flip vertically"
+            className="p-2 rounded bg-primary"
             onClick={() => {
               runInAction(() => {
                 const { flipV, area } = mainStore.transform;
@@ -89,32 +98,53 @@ export const Crop: React.FC = observer(() => {
             <BsSymmetryHorizontal />
           </button>
         </div>
-        <div>
+
+       
+        <div className="flex space-x-4 mx-10">
+         
           <button
+            title="Reset"
+            className="p-2 rounded bg-primary"
             onClick={() => {
               mainStore.reset();
             }}
-            title="Reset"
           >
             <BsArrowCounterclockwise />
           </button>
+
+          
           <button
+            title="Confirm"
+            className="p-2 rounded bg-primary"
             onClick={() => {
               runInAction(() => {
                 video.pause();
                 mainStore.step = 2;
               });
             }}
-            title="Confirm"
           >
             <BsCheck />
           </button>
         </div>
       </div>
+        {/* Video Crop Component */}
+      <VideoCrop
+        transform={mainStore.transform}
+        video={video}
+        onChange={(area) => {
+          runInAction(() => {
+            mainStore.transform = {
+              ...mainStore.transform,
+              area,
+            };
+          });
+        }}
+      />
+      {/* Video Trim Component */}
       <VideoTrim
         time={mainStore.transform.time}
         video={video}
-        onChange={time => {
+        onChange={(time) => {
           runInAction(() => {
             mainStore.transform = {
               ...mainStore.transform,
@@ -123,18 +153,9 @@ export const Crop: React.FC = observer(() => {
           });
         }}
       />
-      <VideoCrop
-        transform={mainStore.transform}
-        video={video}
-        onChange={area =>
-          runInAction(() => {
-            mainStore.transform = {
-              ...mainStore.transform,
-              area,
-            };
-          })
-        }
-      />
+
+    
+     
     </div>
   );
 });

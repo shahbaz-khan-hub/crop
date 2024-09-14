@@ -1,18 +1,17 @@
 import React from 'react';
-import { BsGithub } from 'react-icons/bs';
+
 import { observer } from 'mobx-react-lite';
 
-import styles from './SelectFile.module.scss';
 import { mainStore } from '../stores/main';
 import { PrepareProgress } from '../components/PrepareProgress';
 
 export const SelectFile: React.FC = observer(() => {
   return (
-    <div className={styles.step}>
+    <div className="flex flex-col w-full mt-20 max-w-md justify-center  mx-10 items-center ">
       {mainStore.fileLoading ? (
         <PrepareProgress />
       ) : (
-        <label>
+        <label className="relative bg-primary text-black rounded-md p-4 mr-20 w-80 mx-10 text-center justify-center block shadow-md hover:bg-interactive-hover">
           <input
             type="file"
             accept="video/*,.mkv,.mov,.mp4,.m4v,.mk3d,.wmv,.asf,.mxf,.ts,.m2ts,.3gp,.3g2,.flv,.webm,.ogv,.rmvb,.avi"
@@ -23,38 +22,12 @@ export const SelectFile: React.FC = observer(() => {
               }
               e.target.value = '';
             }}
+            className="absolute inset-0 block cursor-pointer opacity-0 font-size-0"
           />
-          <span>Select a video file</span>
+          <span className='text-secondary-foreground'>Select a video file</span>
         </label>
       )}
-      <div className={styles.credits}>
-        <ul>
-          <li>✔️ Free and open source</li>
-          <li>✔️ Crop, trim, mirror or mute your video easily</li>
-          <li>✔️ No watermarks</li>
-          <li>✔️ Your video files stay on your computer</li>
-        </ul>
-        <div>
-          💜 Thanks to the{' '}
-          <a
-            href="https://github.com/ffmpegwasm/ffmpeg.wasm"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            ffmpeg.wasm
-          </a>{' '}
-          project for making this possible.
-        </div>
-        <div>
-          <a
-            href="https://github.com/mat-sz/crop"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            <BsGithub />
-          </a>
-        </div>
-      </div>
+     
     </div>
   );
 });

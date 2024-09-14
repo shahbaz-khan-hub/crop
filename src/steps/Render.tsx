@@ -4,7 +4,6 @@ import { observer } from 'mobx-react-lite';
 import { BsDownload } from 'react-icons/bs';
 import { runInAction } from 'mobx';
 
-import styles from './Render.module.scss';
 import { mainStore } from '../stores/main';
 import { Slider } from '../components/Slider';
 
@@ -16,9 +15,9 @@ export const Render: React.FC = observer(() => {
 
   if (!ffmpeg.loaded) {
     return (
-      <div className={styles.loading}>
+      <div className="flex flex-col w-full max-w-md">
         <span>FFmpeg is loading... please wait!</span>
-        <progress value={ffmpeg.loadProgress} max={1} />
+        <progress value={ffmpeg.loadProgress} max={1} className="w-full" />
       </div>
     );
   }
@@ -101,23 +100,25 @@ export const Render: React.FC = observer(() => {
   };
 
   return (
-    <div className={styles.step}>
+    <div className="flex flex-col w-full max-w-md text-primary-foreground justify-center items-center">
       {ffmpeg.running ? (
-        <>
-          <div className={styles.actions}>
+        <div className='flex flex-col'>
+          <div className="mb-4">
             <button onClick={() => ffmpeg.cancel()}>
               <span>Cancel</span>
             </button>
           </div>
-          <div className={styles.info}>
+          <div className="mb-4">
             <span>Running</span>
-            <progress value={ffmpeg.execProgress} max={1} />
-            <pre>{ffmpeg.output}</pre>
+            <progress value={ffmpeg.execProgress} max={1} className="w-full" />
+            <pre className="max-w-full max-h-screen overflow-wrap break-word whitespace-pre-wrap overflow-y-auto overflow-x-hidden">
+              {ffmpeg.output}
+            </pre>
           </div>
-        </>
+        </div>
       ) : (
         <>
-          <div className={styles.settings}>
+          <div className="flex flex-col mt-20 space-x-6">
             <div>
               Resolution: {width}px x {height}px
             </div>
@@ -135,15 +136,15 @@ export const Render: React.FC = observer(() => {
               />
             </div>
           </div>
-          <div className={styles.actions}>
-            <button onClick={crop}>
-              <span>Render MP4</span>
+          <div className="flex justify-between mb-4 rounded-sm">
+            <button onClick={crop} className='bg-primary  rounded-md h-6 w-28'>
+              <span className='text-secondary-foreground'>Render MP4</span>
             </button>
             {outputUrl && (
               <a
                 href={outputUrl}
                 download="cropped.mp4"
-                className={clsx('button', styles.download)}
+                className={clsx('button', 'flex items-center')}
               >
                 <BsDownload />
                 <span>Download</span>
@@ -154,15 +155,19 @@ export const Render: React.FC = observer(() => {
       )}
       {outputUrl && !ffmpeg.running && (
         <div>
-          <video src={outputUrl} controls />
+          <video src={outputUrl} controls className="max-w-full" />
         </div>
       )}
       {!!ffmpeg.log && (
-        <div className={styles.info}>
+        <div className="mb-4">
           <button onClick={() => setLogVisible(value => !value)}>
             {logVisible ? 'Hide log' : 'Show log'}
           </button>
-          {logVisible && <pre>{ffmpeg.log}</pre>}
+          {logVisible && (
+            <pre className="max-w-full max-h-screen overflow-wrap break-word whitespace-pre-wrap overflow-y-auto overflow-x-hidden">
+              {ffmpeg.log}
+            </pre>
+          )}
         </div>
       )}
     </div>

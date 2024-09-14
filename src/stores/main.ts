@@ -73,7 +73,7 @@ class FfmpegStore {
   constructor() {
     makeAutoObservable(this);
 
-    this.ffmpeg.on('log', e => {
+    this.ffmpeg.on('log', (e: { message: string; }) => {
       console.log(e);
       runInAction(() => {
         this.output = e.message;
@@ -81,7 +81,7 @@ class FfmpegStore {
       });
     });
 
-    this.ffmpeg.on('progress', e => {
+    this.ffmpeg.on('progress', (e: { progress: number; }) => {
       runInAction(() => {
         this.execProgress = e.progress;
       });
